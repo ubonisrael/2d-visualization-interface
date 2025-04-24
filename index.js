@@ -27,6 +27,7 @@ function createCard(obj) {
   card.dataset.id = obj.arucoId;
   card.dataset.x = obj.screenPosition.x;
   card.dataset.y = obj.screenPosition.y;
+  card.dataset.rotation = obj.rotation.angle;
 
   card.innerHTML = `
       <strong>ID:</strong> ${obj.arucoId}<br>
@@ -39,16 +40,16 @@ function createCard(obj) {
   positionCard(
     card,
     parseFloat(obj.screenPosition.x),
-    parseFloat(obj.screenPosition.y)
+    parseFloat(obj.screenPosition.y),
+    parseFloat(obj.rotation.angle)
   );
   enableDragging(card, obj);
   canvas.appendChild(card);
 }
-
 // function to position the card element
 // based on the x and y coordinates
-function positionCard(card, x, y) {
-  card.style.transform = `translate(${x}px, ${y}px)`;
+function positionCard(card, x, y, rotation) {
+  card.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}rad)`;
 }
 
 // function to update the card element
@@ -56,18 +57,19 @@ function positionCard(card, x, y) {
 function updateCardDetails(card, obj) {
   const newX = parseFloat(card.dataset.x);
   const newY = parseFloat(card.dataset.y);
+  const newRotation = parseFloat(card.dataset.rotation);
 
   card.innerHTML = `
       <strong>ID:</strong> ${obj.arucoId}<br>
       <strong>Pos:</strong> x=${newX.toFixed(2)}, y=${newY.toFixed(2)}<br>
-      <strong>Rot:</strong> ${parseFloat(obj.rotation.angle).toFixed(2)} rad
+      <strong>Rot:</strong> ${newRotation.toFixed(2)} rad
     `;
 }
 
 // function to enable dragging of the card element
 // by adding event listeners for mousedown, mousemove, and mouseup events
 function enableDragging(card, obj) {
-  let startX, startY, origX, origY;
+  let startX, startY, origX, origY, startRotation, origRotation;
 
   card.addEventListener("mousedown", (e) => {
     e.preventDefault();
@@ -75,6 +77,8 @@ function enableDragging(card, obj) {
     startY = e.clientY;
     origX = parseFloat(card.dataset.x);
     origY = parseFloat(card.dataset.y);
+    startRotation = parseFloat(card.dataset.rotation);
+    origRotation = startRotation;
 
     function onMouseMove(e) {
       const dx = e.clientX - startX;
@@ -82,9 +86,15 @@ function enableDragging(card, obj) {
       const newX = origX + dx;
       const newY = origY + dy;
 
+      // Rotation adjustment based on mouse movement (optional)
+    //   const angleChange = (dx + dy) * 0.01;
+    //   const newRotation = origRotation + angleChange;
+
       card.dataset.x = newX;
       card.dataset.y = newY;
-      positionCard(card, newX, newY);
+    //   card.dataset.rotation = newRotation;
+
+      positionCard(card, newX, newY, origRotation);
       updateCardDetails(card, obj); // Update card details dynamically
     }
 
