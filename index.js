@@ -10,7 +10,6 @@ fetch("./position1.json")
     points.forEach(createCard);
   });
 
-
 function applyTransform(el, x, y, rotation) {
   const rad = (rotation * Math.PI) / 180;
   const cos = Math.cos(rad),
@@ -52,9 +51,22 @@ function positionCard(card, x, y) {
   card.style.transform = `translate(${x}px, ${y}px)`;
 }
 
+// function to update the card element
+// when the position changes
+function updateCardDetails(card, obj) {
+  const newX = parseFloat(card.dataset.x);
+  const newY = parseFloat(card.dataset.y);
+
+  card.innerHTML = `
+      <strong>ID:</strong> ${obj.arucoId}<br>
+      <strong>Pos:</strong> x=${newX.toFixed(2)}, y=${newY.toFixed(2)}<br>
+      <strong>Rot:</strong> ${parseFloat(obj.rotation.angle).toFixed(2)} rad
+    `;
+}
+
 // function to enable dragging of the card element
 // by adding event listeners for mousedown, mousemove, and mouseup events
-function enableDragging(card) {
+function enableDragging(card, obj) {
   let startX, startY, origX, origY;
 
   card.addEventListener("mousedown", (e) => {
@@ -73,6 +85,7 @@ function enableDragging(card) {
       card.dataset.x = newX;
       card.dataset.y = newY;
       positionCard(card, newX, newY);
+      updateCardDetails(card, obj); // Update card details dynamically
     }
 
     function onMouseUp() {
