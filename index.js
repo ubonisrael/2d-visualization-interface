@@ -41,7 +41,7 @@ function createCard(obj) {
     parseFloat(obj.screenPosition.x),
     parseFloat(obj.screenPosition.y)
   );
-  enableDragging(card);
+  enableDragging(card, obj);
   canvas.appendChild(card);
 }
 
